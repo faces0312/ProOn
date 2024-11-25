@@ -6,39 +6,35 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T instance;
 
-public static T Instance
-{
-    get
+    public static T Instance
     {
-        if (instance == null)
+        get
         {
-            instance = GameObject.FindObjectOfType<T>();
-
             if (instance == null)
             {
-                instance = new GameObject(typeof(T).Name).AddComponent<T>();
+                instance = GameObject.FindObjectOfType<T>();
+
+                if (instance == null)
+                {
+                    instance = new GameObject(typeof(T).Name).AddComponent<T>();
+                }
             }
+            return instance;
         }
-
-        return instance;
     }
-}
 
-protected virtual void Awake()
-{
-    if (instance == null)
-        instance = this as T;
+    protected virtual void Awake()
+    {
+        if (instance == null)
+            instance = this as T;
+        else if (instance != this)
+            Destroy(gameObject);
 
-    else if (instance != this)
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void DestroySingleton()
     {
         Destroy(gameObject);
     }
-
-    DontDestroyOnLoad(gameObject);
-}
-
-public void DestroySingleton()
-{
-    Destroy(gameObject);
-}
 }
